@@ -1,0 +1,185 @@
+CREATE TABLE `audiobook` (
+  `ISBN` char(10) NOT NULL,
+  `Audio_length` varchar(5) NOT NULL,
+  PRIMARY KEY (`ISBN`),
+  CONSTRAINT `ISBN` FOREIGN KEY (`ISBN`) REFERENCES `book` (`ISBN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `authenticator` (
+  `Email` varchar(50) NOT NULL,
+  `Epassword` varchar(50) NOT NULL,
+  `Type` char(1) NOT NULL,
+  PRIMARY KEY (`Email`),
+  CONSTRAINT `Email` FOREIGN KEY (`Email`) REFERENCES `person` (`Email`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `author` (
+  `ID` varchar(9) NOT NULL,
+  `Fname` varchar(15) NOT NULL,
+  `LName` varchar(15) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `book` (
+  `ISBN` char(10) NOT NULL,
+  `Title` varchar(50) NOT NULL,
+  `Release_date` date NOT NULL,
+  `Volume` varchar(3) NOT NULL,
+  `Publisher_name` varchar(40) DEFAULT NULL,
+  `Languge` varchar(15) DEFAULT NULL,
+  `Avalible` char(1) DEFAULT 'A',
+  PRIMARY KEY (`ISBN`),
+  KEY `book_ibfk_1` (`Languge`),
+  KEY `book_ibfk_2` (`Publisher_name`),
+  CONSTRAINT `book_ibfk_1` FOREIGN KEY (`Languge`) REFERENCES `languge` (`LName`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `book_ibfk_2` FOREIGN KEY (`Publisher_name`) REFERENCES `publisher` (`PName`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `borrowes` (
+  `ISBN` char(10) NOT NULL,
+  `MID` int NOT NULL,
+  `SDate` date NOT NULL,
+  `RDate` date NOT NULL,
+  `Penalty` decimal(5,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`MID`,`ISBN`),
+  KEY `ISBN333_idx` (`ISBN`),
+  CONSTRAINT `brrwoMid` FOREIGN KEY (`MID`) REFERENCES `lmember` (`MID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `ISBN333` FOREIGN KEY (`ISBN`) REFERENCES `book` (`ISBN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `category` (
+  `Name` varchar(15) NOT NULL,
+  PRIMARY KEY (`Name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `languge` (
+  `LName` varchar(15) NOT NULL,
+  PRIMARY KEY (`LName`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `librarian` (
+  `LID` int NOT NULL,
+  `Salary` decimal(5,0) NOT NULL,
+  `Shift_hours` decimal(3,1) unsigned zerofill NOT NULL DEFAULT '00.0',
+  PRIMARY KEY (`LID`),
+  CONSTRAINT `Lidid` FOREIGN KEY (`LID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `lmember` (
+  `MID` int NOT NULL,
+  `Barcode` char(10) NOT NULL,
+  `MStatus` varchar(3) NOT NULL DEFAULT 'nob',
+  `act` varchar(3) NOT NULL DEFAULT 'no',
+  `Borrowed_bks` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`MID`),
+  UNIQUE KEY `Barcode_UNIQUE` (`Barcode`),
+  CONSTRAINT `midid` FOREIGN KEY (`MID`) REFERENCES `person` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `orders` (
+  `LID` int NOT NULL,
+  `PID` varchar(9) NOT NULL,
+  PRIMARY KEY (`LID`,`PID`),
+  KEY `PID` (`PID`),
+  CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`PID`) REFERENCES `provider` (`ID`),
+  CONSTRAINT `ordersLid` FOREIGN KEY (`LID`) REFERENCES `librarian` (`LID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `person` (
+  `ID` int NOT NULL,
+  `Fname` varchar(15) NOT NULL,
+  `LName` varchar(15) NOT NULL,
+  `Phone_number` char(10) NOT NULL,
+  `BDate` date NOT NULL,
+  `Email` varchar(50) NOT NULL,
+  `JDate` date NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `Phone_number` (`Phone_number`),
+  UNIQUE KEY `Email_UNIQUE` (`Email`) /*!80000 INVISIBLE */
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `physicalbook` (
+  `ISBN` char(10) NOT NULL,
+  `Barcode` varchar(10) NOT NULL,
+  `Format` varchar(40) NOT NULL,
+  `Rack_number` varchar(10) NOT NULL,
+  `Copy_number` varchar(10) NOT NULL,
+  PRIMARY KEY (`Barcode`),
+  UNIQUE KEY `ISBN_UNIQUE` (`ISBN`),
+  UNIQUE KEY `isbn` (`ISBN`),
+  KEY `ISBN_idx` (`ISBN`),
+  CONSTRAINT `ISBN458` FOREIGN KEY (`ISBN`) REFERENCES `book` (`ISBN`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `provider` (
+  `ID` varchar(9) NOT NULL,
+  `Name` varchar(40) NOT NULL,
+  `Location` varchar(20) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `provides` (
+  `PID` varchar(9) NOT NULL,
+  `ISBN` char(13) NOT NULL,
+  `ProvisionDate` date NOT NULL,
+  `ReturnDate` date NOT NULL,
+  PRIMARY KEY (`PID`,`ISBN`),
+  CONSTRAINT `provides_ibfk_1` FOREIGN KEY (`PID`) REFERENCES `provider` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `publisher` (
+  `PName` varchar(40) NOT NULL,
+  PRIMARY KEY (`PName`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `requests` (
+  `MID` int NOT NULL,
+  `RequestDate` date NOT NULL,
+  `Bookname` varchar(25) NOT NULL,
+  `Availability` char(1) NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`MID`,`Bookname`),
+  CONSTRAINT `reqMID` FOREIGN KEY (`MID`) REFERENCES `lmember` (`MID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `reserve` (
+  `MID` int NOT NULL,
+  `Title` varchar(15) NOT NULL,
+  `Rdate` date NOT NULL,
+  `Status` char(1) NOT NULL DEFAULT 'N',
+  PRIMARY KEY (`MID`,`Title`),
+  CONSTRAINT `reservemid` FOREIGN KEY (`MID`) REFERENCES `lmember` (`MID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `searches` (
+  `Word` varchar(15) NOT NULL,
+  `MID` int NOT NULL,
+  `Search_c` int NOT NULL,
+  PRIMARY KEY (`Word`,`MID`,`Search_c`),
+  KEY `searchMid_idx` (`MID`),
+  CONSTRAINT `searches_ibfk_2` FOREIGN KEY (`Word`) REFERENCES `word_fillter` (`Word`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `searchMid` FOREIGN KEY (`MID`) REFERENCES `lmember` (`MID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `under` (
+  `Catname` varchar(15) NOT NULL,
+  `ISBN` char(10) NOT NULL,
+  PRIMARY KEY (`Catname`,`ISBN`),
+  KEY `ISBN444_idx` (`ISBN`),
+  CONSTRAINT `ISBN444` FOREIGN KEY (`ISBN`) REFERENCES `book` (`ISBN`),
+  CONSTRAINT `under_ibfk_1` FOREIGN KEY (`Catname`) REFERENCES `category` (`Name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `word_fillter` (
+  `Word` varchar(15) NOT NULL,
+  PRIMARY KEY (`Word`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `wrote` (
+  `AuthorID` varchar(9) NOT NULL,
+  `ISBN` char(10) NOT NULL,
+  PRIMARY KEY (`AuthorID`,`ISBN`),
+  KEY `ISBN_idx` (`ISBN`),
+  KEY `ISBN302_idx` (`ISBN`),
+  CONSTRAINT `ISBN302` FOREIGN KEY (`ISBN`) REFERENCES `book` (`ISBN`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `wrote_ibfk_1` FOREIGN KEY (`AuthorID`) REFERENCES `author` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
