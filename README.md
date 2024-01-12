@@ -1,7 +1,12 @@
 # Library System
 
+![Alt text](/images/DB.png)
+
 ## Overview
 The Library System is a Java-based application designed to manage library operations efficiently. This system covers various functionalities such as book management, member management, and borrowing processes.
+
+## Database Schema
+
 
 ## Features
 - **Book Management**: Allows librarians to add, edit, and manage books.
