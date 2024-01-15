@@ -37,5 +37,10 @@ The application is built using JavaFX. To run the application:
 ## Database
 The system uses SQL for data management. The database schema and initial setup are provided in the repository. ([Dump20220217.sql](https://github.com/AbdullahAlzeid/LibrarySystem/blob/main/Dump20220217.sql))
 
+## Authors
+- [AbdullahAlzeid](https://github.com/AbdullahAlzeid)
+- [Yaarob988](https://github.com/Yaarob988)
+- [Omarjsg](https://github.com/Omarjsg)
+
 ## License
 This project is licensed under the [MIT License](LICENSE).
